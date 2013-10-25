@@ -2,7 +2,7 @@
 % GDA approach
 load CS229training_data
 m = 7352;
-n = 561;
+n = 6;
 
 % assume equal prior for phi
 phi1 = 1/6;
@@ -13,12 +13,15 @@ phi5 = 1/6;
 phi6 = 1/6;
 
 % sort training examples by label
-X1 = X_train(y_train==1,:);
-X2 = X_train(y_train==2,:);
-X3 = X_train(y_train==3,:);
-X4 = X_train(y_train==4,:);
-X5 = X_train(y_train==5,:);
-X6 = X_train(y_train==6,:);
+feature = zeros(561,1);
+feature(1:3) = [1;1;1];
+feature(121:123) = [1;1;1];
+X1 = X_train(y_train==1,feature==1);
+X2 = X_train(y_train==2,feature==1);
+X3 = X_train(y_train==3,feature==1);
+X4 = X_train(y_train==4,feature==1);
+X5 = X_train(y_train==5,feature==1);
+X6 = X_train(y_train==6,feature==1);
 
 % estimate mu
 mu1 = mean(X1);
@@ -30,7 +33,7 @@ mu6 = mean(X6);
 
 % estimate Sigma
 % something is wrong here, sigma is not full rank somehow
-Sigma = zeros(561);
+Sigma = zeros(6);
 for i = 1:length(X1)
     Sigma = Sigma + (X1(i,:)-mu1)'*(X1(i,:)-mu1); %X1(i,:) - mu1 is row vec
 end
@@ -55,8 +58,11 @@ Sigma = Sigma/m;
 %% 
 % for a test point, classify based of argmax P(y|x)*P(y)
 % not finished
-test_x = X1(45,:);
-P(1) = 1/((2*pi)^(n/2))*exp(-1/2*(test_x-mu1)* (pinv(Sigma) * (test_x-mu1)'));
-P(2) = 1/((2*pi)^(n/2))*exp(-1/2*(test_x-mu2)* (pinv(Sigma) * (test_x-mu2)'));
-P(3) = 1/((2*pi)^(n/2))*exp(-1/2*(test_x-mu3)* (pinv(Sigma) * (test_x-mu3)'));
+test_x = X1(10,:);
+P(1) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu1)* inv(Sigma) * (test_x-mu1)')*phi1;
+P(2) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu2)* inv(Sigma) * (test_x-mu2)')*phi2;
+P(3) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu3)* inv(Sigma) * (test_x-mu3)')*phi3;
+P(4) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu4)* inv(Sigma) * (test_x-mu4)')*phi4;
+P(5) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu5)* inv(Sigma) * (test_x-mu5)')*phi5;
+P(6) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu6)* inv(Sigma) * (test_x-mu6)')*phi6;
 
