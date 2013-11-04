@@ -55,14 +55,23 @@ end
 Sigma2 = cov(X1)+cov(X2)+cov(X3)+cov(X4)+cov(X5)+cov(X6);
 %iSigma = m*inv(Sigma);
 Sigma = Sigma/m;
-%% 
+%%
 % for a test point, classify based of argmax P(y|x)*P(y)
 % not finished
-test_x = X1(10,:);
-P(1) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu1)* inv(Sigma) * (test_x-mu1)')*phi1;
-P(2) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu2)* inv(Sigma) * (test_x-mu2)')*phi2;
-P(3) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu3)* inv(Sigma) * (test_x-mu3)')*phi3;
-P(4) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu4)* inv(Sigma) * (test_x-mu4)')*phi4;
-P(5) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu5)* inv(Sigma) * (test_x-mu5)')*phi5;
-P(6) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu6)* inv(Sigma) * (test_x-mu6)')*phi6;
+answersRight = 0;
 
+for testIndex = 1:length(X1);
+    P = zeros(6,1);
+    test_x = X1(testIndex,:);
+    P(1) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu1)* inv(Sigma) * (test_x-mu1)')*phi1;
+    P(2) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu2)* inv(Sigma) * (test_x-mu2)')*phi2;
+    P(3) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu3)* inv(Sigma) * (test_x-mu3)')*phi3;
+    P(4) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu4)* inv(Sigma) * (test_x-mu4)')*phi4;
+    P(5) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu5)* inv(Sigma) * (test_x-mu5)')*phi5;
+    P(6) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu6)* inv(Sigma) * (test_x-mu6)')*phi6;
+    [x,y] = max(P);
+    y
+    if (y==1)
+        answersRight = answersRight +1;
+    end
+end
