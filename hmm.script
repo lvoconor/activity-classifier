@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#$ -N hmm
+#$ -m bes
+#$ -M tdeitch@stanford.edu
+#$ -V
+
+module load matlab
+matlab -nodesktop < hmm.m
+
