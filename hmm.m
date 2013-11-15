@@ -1,6 +1,6 @@
 %% HMM on raw data
 
-numBuckets = 10^4;
+for numBuckets = 200;
 numStates = 6;
 
 load('CS229training_data.mat');
@@ -16,12 +16,8 @@ pseudo_emis = ones(numStates,numBuckets);
 [trans,emis] = hmmestimate(discreteTrainX, y_train, 'Pseudotransitions',...
                            pseudo_trans, 'Pseudoemissions', pseudo_emis);
 
-% Update prior probabilities
-trans_hat = zeros(numStates+1,numStates+1);
-trans_hat(2:numStates+1,2:numStates+1) = trans;
-trans_hat(1,2:numStates+1) = 1/numStates;
-emis_hat = [zeros(size(emis(1,:))); emis];
-
 % Estimate states of testing data
-estimatedStates = hmmviterbi(discreteTestX,trans_hat,emis_hat);
+estimatedStates = hmmviterbi(discreteTestX,trans,emis);
 testingAccuracy = sum(y_test==estimatedStates')/length(y_test)
+
+end
