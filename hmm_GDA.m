@@ -12,6 +12,8 @@ pseudo_trans = ones(numStates,numStates);
 pseudo_emis = ones(numStates,numStates);
 [trans,emis] = hmmestimate(trainPredictLabel,y_train,'Pseudotransitions',pseudo_trans,'Pseudoemissions',pseudo_emis);
 
+trans
+
 % Estimate states of testing data
 trainEstimatedStates = hmmviterbi(trainPredictLabel,trans,emis);
 trainingAccuracy = sum(y_train==trainEstimatedStates')/length(y_train)
