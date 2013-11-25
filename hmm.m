@@ -1,14 +1,23 @@
-disp('Loading Data');
-load('rawTrain.mat');
-load('rawTest.mat');
-disp('Discretizing Data');
-discreteTrainX = round(rawTrainX * 10^6 + 10^7);
-discreteTest = round(rawTest * 10^6 + 10^7);
-clearvars rawTrainX rawTest;
-disp('Generating Transition and Emission Matrices');
-[trans,emis] = hmmestimate(discreteTrainX, rawTrainY);
-trans_hat = zeros(7,7);
-trans_hat(2:7,2:7) = trans;
-trans_hat(1,2:7) = 1/6;
-emis_hat = [zeros(size(emis(1,:))); emis];
-disp('Done');
+%% HMM on raw data
+
+for numBuckets = 200;
+numStates = 6;
+
+load('CS229training_data.mat');
+load('CS229testing_data.mat');
+
+% Discretize data
+discreteTrainX = round((X_train + 1) * .5 * (numBuckets - 1) + 1);
+discreteTestX = round((X_test + 1) * .5 * (numBuckets - 1) + 1);
+
+% Estimate transition and emission probabilities
+pseudo_trans = ones(numStates,numStates);
+pseudo_emis = ones(numStates,numBuckets);
+[trans,emis] = hmmestimate(discreteTrainX, y_train, 'Pseudotransitions',...
+                           pseudo_trans, 'Pseudoemissions', pseudo_emis);
+
+% Estimate states of testing data
+estimatedStates = hmmviterbi(discreteTestX,trans,emis);
+testingAccuracy = sum(y_test==estimatedStates')/length(y_test)
+
+end
