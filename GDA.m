@@ -1,77 +1,77 @@
-%% CS229 Project
-% GDA approach
+%% GDA with built-in functions
+format compact
+close all
+clear all
+clc
+
+%% Train Model
+%load CS229training_data
+load rawIntertialTrain
+y_train = raw_Y_train;
+X_train = raw_X_train;
+%featuresToUse = 1:561;
+featuresToUse = 1:9;
+X = X_train(:,featuresToUse);
+
+cls = ClassificationDiscriminant.fit(X,y_train,'discrimType','linear');
+
+%% Test Model
+%load CS229testing_data
+load rawIntertialTest
+y_test = raw_Y_test;
+X_test = raw_X_test;
+predictLabel =  predict(cls,X);
+trainingAccuracy = sum(y_train==predictLabel)/length(y_train)
+
+predictLabel = predict(cls,X_test(:,featuresToUse));
+testingAccuracy = sum(y_test==predictLabel)/length(y_test)
+
+%% Backwards Feature Search
+close all
+clear all
+clc
+
 load CS229training_data
-m = 7352;
-n = 6;
+load CS229testing_data
+feats = textread('features.txt','%s');
 
-% assume equal prior for phi
-phi1 = 1/6;
-phi2 = 1/6;
-phi3 = 1/6;
-phi4 = 1/6;
-phi5 = 1/6;
-phi6 = 1/6;
+sparseTrainFactor = 1;
+m = length(X_train(:,1));
+X_train = X_train(1:sparseTrainFactor:m,:);
+y_train = y_train(1:sparseTrainFactor:m);
+m = length(X_test(:,1));
+X_test = X_test(1:1:m,:);
+y_test = y_test(1:1:m);
 
-% sort training examples by label
-feature = zeros(561,1);
-feature(1:3) = [1;1;1];
-feature(121:123) = [1;1;1];
-X1 = X_train(y_train==1,feature==1);
-X2 = X_train(y_train==2,feature==1);
-X3 = X_train(y_train==3,feature==1);
-X4 = X_train(y_train==4,feature==1);
-X5 = X_train(y_train==5,feature==1);
-X6 = X_train(y_train==6,feature==1);
-
-% estimate mu
-mu1 = mean(X1);
-mu2 = mean(X2);
-mu3 = mean(X3);
-mu4 = mean(X4);
-mu5 = mean(X5);
-mu6 = mean(X6);
-
-% estimate Sigma
-% something is wrong here, sigma is not full rank somehow
-Sigma = zeros(6);
-for i = 1:length(X1)
-    Sigma = Sigma + (X1(i,:)-mu1)'*(X1(i,:)-mu1); %X1(i,:) - mu1 is row vec
-end
-for i = 1:length(X2)
-    Sigma = Sigma + (X2(i,:)-mu2)'*(X2(i,:)-mu2);
-end
-for i = 1:length(X3)
-    Sigma = Sigma + (X3(i,:)-mu3)'*(X3(i,:)-mu3);
-end
-for i = 1:length(X4)
-    Sigma = Sigma + (X4(i,:)-mu4)'*(X4(i,:)-mu4);
-end
-for i = 1:length(X5)
-    Sigma = Sigma + (X5(i,:)-mu5)'*(X5(i,:)-mu5);
-end
-for i = 1:length(X6)
-    Sigma = Sigma + (X6(i,:)-mu6)'*(X6(i,:)-mu6);
-end
-Sigma2 = cov(X1)+cov(X2)+cov(X3)+cov(X4)+cov(X5)+cov(X6);
-%iSigma = m*inv(Sigma);
-Sigma = Sigma/m;
-%%
-% for a test point, classify based of argmax P(y|x)*P(y)
-% not finished
-answersRight = 0;
-
-for testIndex = 1:length(X1);
-    P = zeros(6,1);
-    test_x = X1(testIndex,:);
-    P(1) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu1)* inv(Sigma) * (test_x-mu1)')*phi1;
-    P(2) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu2)* inv(Sigma) * (test_x-mu2)')*phi2;
-    P(3) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu3)* inv(Sigma) * (test_x-mu3)')*phi3;
-    P(4) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu4)* inv(Sigma) * (test_x-mu4)')*phi4;
-    P(5) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu5)* inv(Sigma) * (test_x-mu5)')*phi5;
-    P(6) = 1/((2*pi)^(n/2)*sqrt(det(Sigma)))*exp(-1/2*(test_x-mu6)* inv(Sigma) * (test_x-mu6)')*phi6;
-    [x,y] = max(P);
-    y
-    if (y==1)
-        answersRight = answersRight +1;
+for i=1:1
+    allAccuracy = zeros(length(X_train(1,:)),1);
+    tic
+    for j = 1:length(X_train(1,:)) %number of features left
+    %for j = 1:1
+        featuresToUse = [1:j-1 j+1:561]; %use all but jth feature
+        X = X_train(:,featuresToUse);
+        cls = ClassificationDiscriminant.fit(X,y_train);
+        predictLabel = predict(cls,X_test(:,featuresToUse));
+        allAccuracy(j) = sum(y_test==predictLabel)/length(y_test);
+        fprintf('Removing feature %d \n',j);
     end
+    toc
+    
 end
+
+[allSort,sortInd] = sort(allAccuracy);
+plot(allSort);
+ylabel('Test Accuracy');
+xlabel('Sorted Feature Index');
+%%
+top5 = zeros(5,1);
+for i = 1:5
+    top5(i) = find(sortInd==i);
+end
+feats(top5*2)
+
+bot5 = zeros(5,1);
+for i = 1:5
+    bot5(i) = find(sortInd==(562-i));
+end
+feats(bot5*2)
