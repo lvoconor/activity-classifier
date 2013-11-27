@@ -6,7 +6,7 @@ clc
 
 %% Train Model
 %load CS229training_data
-load rawIntertialTrain
+load rawInertialTrain
 y_train = raw_Y_train;
 X_train = raw_X_train;
 %featuresToUse = 1:561;
