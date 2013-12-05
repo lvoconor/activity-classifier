@@ -6,7 +6,7 @@ clc
 
 %% Train Model
 %load CS229training_data
-load rawIntertialTrain
+load rawInertialTrain
 y_train = raw_Y_train;
 X_train = raw_X_train;
 %featuresToUse = 1:561;
@@ -17,7 +17,7 @@ cls = ClassificationDiscriminant.fit(X,y_train,'discrimType','linear');
 
 %% Test Model
 %load CS229testing_data
-load rawIntertialTest
+load rawInertialTest
 y_test = raw_Y_test;
 X_test = raw_X_test;
 predictLabel =  predict(cls,X);
