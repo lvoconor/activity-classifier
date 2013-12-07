@@ -117,22 +117,64 @@ for i=1:15 %adding features
 end
 
 
+%% PCA (calculate eigenvalue decomp)
+close all 
+clear all
+
+load CS229training_data
+load CS229testing_data
+[m,n] = size(X_train);
+mtest = size(X_test,1);
+
+% first zero the data
+X = X_train-ones(m,n)*diag(mean(X_train));
+X_test = X_test-ones(mtest,n)*diag(mean(X_test));
+% normalize by variance
+sig = var(X);
+for i=m
+    for j=1:n
+        X(i,j) = X(i,j)/sig(j);       
+    end
+end
+
+sig = var(X_test);
+for i=mtest
+    for j=1:n
+        X_test(i,j) = X_test(i,j)/sig(j);       
+    end
+end
+
+% create data matrix
+DATA = zeros(n,n);
+for i = 1:m
+    DATA = DATA + X(i,:)'*X(i,:);
+end
+DATA = DATA/m;
+
+[V,D] = eig(DATA);
 %%
 
-[allSort,sortInd] = sort(allAccuracy);
-plot(allSort);
-ylabel('Test Accuracy');
-xlabel('Sorted Feature Index');
+clear Xsubspace X_subtest
+plot(sort(diag(D),'descend'))
 
-top5 = zeros(5,1);
-for i = 1:5
-    top5(i) = find(sortInd==i);
+% choose to represent data in k dimenional space
+k = 551;
+projectionMatrix = V(:,1:k)';
+for i=1:m
+    Xsubspace(i,:) = projectionMatrix*(X(i,:)');
 end
-feats(top5*2)
 
-bot5 = zeros(5,1);
-for i = 1:5
-    bot5(i) = find(sortInd==(562-i));
+for i=1:size(X_test,1)
+    X_subtest(i,:) = projectionMatrix*(X_test(i,:)');
 end
-feats(bot5*2)
+
+% test lower dimensional data
+
+cls = ClassificationDiscriminant.fit(Xsubspace,y_train,'discrimType','linear');
+predictLabel = predict(cls,Xsubspace);
+trainingAccuracy = sum(y_train==predictLabel)/length(y_train)
+
+predictLabel = predict(cls,X_subtest);
+testingAccuracy = sum(y_test==predictLabel)/length(y_test)
+
 
