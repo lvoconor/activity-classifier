@@ -1,7 +1,7 @@
 % use all 9 features for clustering? 
 load('rawInertialTrain.mat')
 [numExamples, numFeatures] = size(raw_X_train);
-%numclusters = 7;
+numclusters = 16;
 [clusterindices, clustercentroids] = kmeans(raw_X_train, numclusters);
 
 %% basic consistency check

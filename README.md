@@ -10,4 +10,7 @@ Todo
 - K-means clustering w/ HMM
 - Ablative analysis
 - MATLAB visualizations (for the poster)
-- Smartphone app
+- Test on same users as training data
+- K-means clustering adjusted with user data
+- K-means + HMM accuracy vs number of clusters
+- GDA n-gram over raw data
