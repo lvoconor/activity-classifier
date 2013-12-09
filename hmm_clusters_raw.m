@@ -6,7 +6,7 @@ numStates = 6;
 [numEmissions, numFeatures] = size(clusterindices);
 
 load('rawInertialTrain.mat');
-load('rawIntertialTest.mat');
+load('rawInertialTest.mat');
 
 % Estimate transition and emission probabilities
 pseudo_trans = ones(numStates,numStates);
