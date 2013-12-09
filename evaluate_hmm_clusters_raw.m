@@ -1,10 +1,10 @@
 clear()
-trainAccuracies = [];
-testAccuracies = [];
+raw_cluster_trainAccuracies = [];
+raw_cluster_testAccuracies = [];
 clustercount = [];
-for numclusters = 3:10
+for numclusters = 1:25
     hmm_clusters_raw;
     clustercount  = [clustercount ; numclusters];
-    trainAccuracies = [trainAccuracies;trainingAccuracy];
-    testAccuracies = [testAccuracies;testingAccuracy];
+    raw_cluster_trainAccuracies = [raw_cluster_trainAccuracies;trainingAccuracy];
+    raw_cluster_testAccuracies = [raw_cluster_testAccuracies;testingAccuracy];
 end
