@@ -2,8 +2,7 @@
 %load CS229training_data
 load rawInertialTrain
 
-n = 3;   
-
+  
 % ngramnumtrainexamples = numexamples -n + 1 % decrease number of examples so don't have to deal with edge conditions;
 % ngramnumfeatures = n * numfeatures;
 % ngramXtrain = zeros(ngramnumexamples, ngramnumfeatures)
@@ -26,7 +25,7 @@ cls = ClassificationDiscriminant.fit(ngramXtrain,ngramYtrain,'discrimType','line
 
 %% Test Model
 %load CS229testing_data
-load rawIntertialTest
+load rawInertialTest
 [ngramXtest, ngramYtest] = ngramConvert(n, raw_X_test, raw_Y_test);
 predictLabel =  predict(cls,ngramXtrain);
 trainingAccuracy = sum(ngramYtrain==predictLabel)/length(ngramYtrain)
