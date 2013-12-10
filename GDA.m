@@ -80,27 +80,43 @@ DATA = DATA/m;
 
 [V,D] = eig(DATA);
 %%
-
-clear Xsubspace X_subtest
+close all
+K = [1 5 20 40 50 60 70 80 90 100 125 150 175 200 225 250 275 300 325 ...
+    350 375 400 425 450 475 500 525 530 540 545 550 555 558 559 560 561];
 plot(sort(diag(D),'descend'))
-
-% choose to represent data in k dimenional space
-k = 551;
-projectionMatrix = V(:,1:k)';
-for i=1:m
-    Xsubspace(i,:) = projectionMatrix*(X(i,:)');
+tic
+for plotIter = 1:length(K)
+    clear Xsubspace X_subtest
+    
+    
+    % choose to represent data in k dimenional space
+    k = K(plotIter);
+    projectionMatrix = V(:,562-k:end)';
+    for i=1:m
+        Xsubspace(i,:) = projectionMatrix*(X(i,:)');
+    end
+    
+    for i=1:size(X_test,1)
+        X_subtest(i,:) = projectionMatrix*(X_test(i,:)');
+    end
+    
+    % test lower dimensional data
+    
+    cls = ClassificationDiscriminant.fit(Xsubspace,y_train,'discrimType','linear');
+    predictLabel = predict(cls,Xsubspace);
+    trainingAccuracy(plotIter) = sum(y_train==predictLabel)/length(y_train);
+    
+    predictLabel = predict(cls,X_subtest);
+    testingAccuracy(plotIter) = sum(y_test==predictLabel)/length(y_test);
+    
+    fprintf('Currently on iteration %d out of %d \n',plotIter,length(K));
 end
-
-for i=1:size(X_test,1)
-    X_subtest(i,:) = projectionMatrix*(X_test(i,:)');
-end
-
-% test lower dimensional data
-
-cls = ClassificationDiscriminant.fit(Xsubspace,y_train,'discrimType','linear');
-predictLabel = predict(cls,Xsubspace);
-trainingAccuracy = sum(y_train==predictLabel)/length(y_train)
-
-predictLabel = predict(cls,X_subtest);
-testingAccuracy = sum(y_test==predictLabel)/length(y_test)
+fprintf('Runtime: %.2f minutes \n',toc/60);
+figure
+hold all
+plot(K,trainingAccuracy)
+plot(K,testingAccuracy)
+legend('Training','Testing','Location','Best');
+xlabel('Dimension of Feature-space');
+ylabel('Accuracy');
 
