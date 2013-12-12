@@ -20,9 +20,9 @@ for i=1:30
     testPredictLabel = predict(cls,Xtest);
     acc = sum(ytest==testPredictLabel)/length(ytest);
     num = length(ytest);
-    loo_testaccuracies = [loo_testaccuracies acc-1/6];
+    loo_testaccuracies = [loo_testaccuracies acc];
     subjectnumbers = [ subjectnumbers i];
     
-    fprintf('Subject: %d, Data points: %d, Accuracy: %f\n', i, num, acc-1/6);
+    fprintf('Subject: %d, Data points: %d, Accuracy: %f\n', i, num, acc);
 end
 
